@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 
 const GOOGLE_MAPS_API = 'AIzaSyA3cOOSD0KUBRXdGBf4ATenDNQcIeIv8p8';
 
-class Map extends Component {
-  constructor() {
-    super();
+class Map extends PureComponent {
+  constructor(props) {
+    super(props);
 
     this.currentMarker = null;
 
@@ -31,11 +31,13 @@ class Map extends Component {
 
   setupMapEventListeners() {
     this.map.addListener('click', (e) => {
+      const latLng = e.latLng;
       if (this.currentMarker === null) {
-        this.currentMarker = this.addMarkerAt(e.latLng);
+        this.currentMarker = this.addMarkerAt(latLng);
       } else {
-        this.currentMarker.setPosition(e.latLng);
+        this.currentMarker.setPosition(latLng);
       }
+      this.props.onMarkerLocationChanged(latLng);
     });
   }
 

@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 class EditMall extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      name: '',
-      url: '',
-      address: '',
+      name: props.name,
+      url: props.url,
+      address: props.address,
+      latLng: props.latLng,
     };
   }
 
@@ -32,6 +33,7 @@ class EditMall extends Component {
   }
  
   render() {
+    console.log('EditMall render');
     return (
       <Container>
         <Form onSubmit={this.onSubmit}>
@@ -57,9 +59,10 @@ class EditMall extends Component {
               </tr>
             </tbody>
           </table>
-          <div>
+          <Footer>Location: {this.props.mall.latLng && this.props.mall.latLng.toString()}</Footer>          
+          <Footer>
             <input type="submit" value="Save" />
-          </div>
+          </Footer>
         </Form>
       </Container>
     );
@@ -78,6 +81,10 @@ const TableData = styled.td`
 
 const Form = styled.form`
   padding: 1em;
+`;
+
+const Footer = styled.div`
+  padding: 15px;
 `;
 
 export default EditMall;

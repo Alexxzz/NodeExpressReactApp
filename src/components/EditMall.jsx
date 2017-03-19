@@ -15,6 +15,13 @@ class EditMall extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
+    this.props.onSaveEdit({
+      id: Date.now(), 
+      name: this.state.name,
+      url: this.state.url,
+      address: this.state.address,
+      latLng: this.props.mall.latLng,
+    })
     console.log(`name: ${this.state.name}`);
     console.log(`url: ${this.state.url}`);
     console.log(`address: ${this.state.address}`);

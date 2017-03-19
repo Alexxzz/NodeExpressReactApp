@@ -1,9 +1,20 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const GOOGLE_MAPS_API = 'AIzaSyA3cOOSD0KUBRXdGBf4ATenDNQcIeIv8p8';
 
-class Map extends PureComponent {
+function loadScript(url, onload) {
+  const tag = document.createElement('script');
+  const body = document.getElementsByTagName('body')[0];
+  tag.type = 'text/javascript';
+  tag.async = true;
+  tag.defer = true;
+  tag.src = url;
+  tag.onload = onload;
+  body.appendChild(tag);
+}
+
+class Map extends Component {
   constructor(props) {
     super(props);
 
@@ -19,16 +30,6 @@ class Map extends PureComponent {
     loadScript(googleMapsApiUrl, () => this.setState({ google: window.google }));
   }
 
-  attachMapsTo(ref) {
-    if (ref && this.state.google) {
-      const maps = this.state.google.maps;
-      const center = new maps.LatLng(52.1949986, 5.0);
-      this.map = new maps.Map(ref, { center, zoom: 8 });
-
-      this.setupMapEventListeners();
-    }
-  }
-
   setupMapEventListeners() {
     this.map.addListener('click', (e) => {
       const latLng = e.latLng;
@@ -37,14 +38,34 @@ class Map extends PureComponent {
       } else {
         this.currentMarker.setPosition(latLng);
       }
-      this.props.onMarkerLocationChanged(latLng);
+      this.props.onMarkerLocationChanged(this.currentMarker.id, latLng);
     });
   }
 
-  addMarkerAt(position) {
+  attachMapsTo(ref) {
+    if (ref && this.state.google) {
+      if (this.map == null) {
+        const maps = this.state.google.maps;
+        const center = new maps.LatLng(52.1949986, 5.0);
+        this.map = new maps.Map(ref, { center, zoom: 8 });
+        this.setupMapEventListeners();
+      }
+      this.renderMarkers();
+    }
+  }
+
+  addMarkerAt(position, id) {
     return new this.state.google.maps.Marker({
       position,
       map: this.map,
+      id,
+    });
+  }
+
+  renderMarkers() {
+    console.log('Render markers: ', this.props.markers.length);
+    this.props.markers.forEach((m) => {
+      this.addMarkerAt(m.latLng, m.id);
     });
   }
 
@@ -55,17 +76,6 @@ class Map extends PureComponent {
       </Container>
     );
   }
-}
-
-function loadScript(url, onload) {
-  const tag = document.createElement('script');
-  const body = document.getElementsByTagName('body')[0];
-  tag.type = 'text/javascript';
-  tag.async = true;
-  tag.defer = true;
-  tag.src = url;
-  tag.onload = onload;
-  body.appendChild(tag);
 }
 
 const Container = styled.div`

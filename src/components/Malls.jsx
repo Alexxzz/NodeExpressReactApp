@@ -47,12 +47,6 @@ const EditMallContainer = styled.div`
   width: 25%; 
 `;
 
-/*
-animation: ${props => props.visible ?
-`${CloseAnimation} 1s ease-in-out forwards;` :
-`${OpenAnimation} 1s ease-in-out forwards;`}
-*/
-
 const AddMallButton = styled.button`
   position: absolute;
 
@@ -60,10 +54,14 @@ const AddMallButton = styled.button`
   width: 50px;
   height: 50px;
 
-  font-size: 30px;
-
   top: 4px;
   left: -60px;
+`;
+
+const OpenCloseButtonText = styled.div`
+  font-size: 30px;
+  transform: ${props => props.rotated ? 'rotate(45deg)' : 'rotate(0deg)'};
+  transition: 0.3s;
 `;
 
 @observer
@@ -105,7 +103,9 @@ class Malls extends Component {
           <Map markers={this.storage.malls} onMarkerLocationChanged={this.onMarkerLocationChanged} />
         </MapContainer>
         <EditMallContainer visible={this.state.editVisible}>
-          <AddMallButton onClick={this.toggleMenu}>+</AddMallButton>
+          <AddMallButton onClick={this.toggleMenu}>
+            <OpenCloseButtonText rotated={this.state.editVisible}>+</OpenCloseButtonText>
+          </AddMallButton>
           <EditMall mall={this.state.editingMall} onSaveEdit={this.onSaveEdit} />
         </EditMallContainer>
       </Container>
